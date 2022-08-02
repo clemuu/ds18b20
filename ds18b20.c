@@ -82,14 +82,14 @@ void req_temperature()
 	bus_init();
 }
 
-int32_t get_temperature()
+int16_t get_temperature(uint8_t correction, uint8_t shift)
 {
 	if(!bus_read_bit())							//check if sensor is still converting
 	{
 		return 0xFFFF;
 	}
 	
-	int32_t ret=0x0000;
+	int16_t ret=0x0000;
 	
 
 	
@@ -100,6 +100,20 @@ int32_t get_temperature()
 	ret |= bus_read_byte()<<8;					//read 2nd byte
 	bus_init();									//stop reading
 	
-	return ret*62;								//62 correction fixed point arithmetic
+	ret = ret >> shift;							//shift fpa
 	
+	return ret*correction;						//correction fpa
+
+}
+
+
+void set_resolution(uint8_t configuration)
+{	
+	bus_init();
+	bus_write_byte(ROMSKIP);
+	bus_write_byte(SCRATCHPADWRITE);
+	bus_write_byte(0x00);
+	bus_write_byte(0x00);
+	bus_write_byte(configuration);
+	bus_init();
 }

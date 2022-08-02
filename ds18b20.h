@@ -40,6 +40,23 @@
 #define ONE_DUR				10
 #define ZERO_DUR			70
 
+//Correction factor fixed point arithmetic
+#define CORRECTION12		6		//for 12-Bit mode, exact value:		6.25
+#define CORRECTION11		12		//for 11-Bit mode, exact value:		12.5
+#define CORRECTION10		25		//for 10-Bit mode, exact value:		25
+#define CORRECTION9			50		//for 9-Bit mode, exact value:		50
+
+//Correction shift due to fixed point arithmetic
+#define SHIFT12				0		
+#define SHIFT11				1		
+#define SHIFT10				2		
+#define SHIFT9				3
+
+//Configuration Bytes
+#define CONFIG12	0x7F				//12 Byte-Mode
+#define CONFIG11	0x5F				//11 Byte-Mode
+#define CONFIG10	0x3F				//10 Byte-Mode
+#define CONFIG9		0x1F				//9 Byte-Mode
 
 
 void bus_init();
@@ -50,8 +67,10 @@ void bus_write_byte(char byte);
 uint8_t bus_read_bit();
 uint8_t bus_read_byte();
 
-void req_temperature();
-int32_t get_temperature();				//returns temperature in deg x 10,
-										//returns 0xFFFF if conversion is in progress
+void set_resolution(uint8_t configuration);						// set configuration bytes for 12 bit, 11 bit...
+
+void req_temperature();											//start sensor temperature conversion
+int16_t get_temperature(uint8_t correction, uint8_t shift);		//returns converted temperature in deg x 100,
+																//returns 0xFFFF if conversion is in progress
 
 #endif /* DS18B20_H_ */

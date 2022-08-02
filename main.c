@@ -22,6 +22,7 @@ int main(void)
 	lcd_clear();
 	lcd_home();
 	
+	set_resolution(CONFIG12);
 	
 	int32_t temp;
 	
@@ -29,7 +30,7 @@ int main(void)
 	{
 		req_temperature();
 		_delay_ms(500);							//wait conversion time
-		temp = get_temperature();
+		temp = get_temperature(CORRECTION12, SHIFT12);
 		
 		if(temp == 0xFFFF)
 		{
@@ -39,7 +40,9 @@ int main(void)
 		{
 			lcd_setcursor(0,2);
 			lcd_string(itoa(temp,buffer,10));
-			lcd_string(" Grad");
+			lcd_string(" G  ");
+			lcd_home();
+			lcd_string(itoa(temp,buffer,2));
 		}
 	}
 }
